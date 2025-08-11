@@ -113,113 +113,12 @@ function WorkDetail() {
           {date && <div className="work-detail-date-small" style={{ color: '#666', fontSize: '0.95rem', marginBottom: '0.5rem', fontWeight: 'normal', fontFamily: 'inherit' }}>{date}</div>}
           {type && <div className="work-detail-type" style={{ color: '#888', fontSize: '0.95rem', marginBottom: '0.5rem', fontWeight: 'normal', fontFamily: 'inherit' }}>{type}</div>}
           {description && <div className="work-detail-description" style={{ fontWeight: 'normal', fontFamily: 'inherit', fontSize: '1rem', color: '#181818' }}>{description}</div>}
-          {images.map((resourceUrl, idx) => {
-            if (resourceUrl.match(/\.(mp4)$/i)) {
-              return (
-                <video className="work-detail-image" controls preload="metadata" style={{background:'#000'}} key={idx}>
-                  <source src={resourceUrl} type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
-              );
-            } else if (resourceUrl.includes('youtube.com') || resourceUrl.includes('youtu.be')) {
-              // Extraer videoId para embed (más robusto)
-              let videoId = '';
-              try {
-                // 1. youtu.be/VIDEOID
-                let match = resourceUrl.match(/youtu\.be\/([a-zA-Z0-9_-]{8,})/);
-                if (match) videoId = match[1];
-                // 2. youtube.com/watch?v=VIDEOID
-                if (!videoId) {
-                  match = resourceUrl.match(/[?&]v=([a-zA-Z0-9_-]{8,})/);
-                  if (match) videoId = match[1];
-                }
-                // 3. youtube.com/shorts/VIDEOID
-                if (!videoId) {
-                  match = resourceUrl.match(/shorts\/([a-zA-Z0-9_-]{8,})/);
-                  if (match) videoId = match[1];
-                }
-                // 4. youtube.com/embed/VIDEOID
-                if (!videoId) {
-                  match = resourceUrl.match(/embed\/([a-zA-Z0-9_-]{8,})/);
-                  if (match) videoId = match[1];
-                }
-                // 5. Si aún no, intenta extraer tras último /
-                if (!videoId) {
-                  const parts = resourceUrl.split('/');
-                  videoId = parts[parts.length - 1];
-                  // Elimina parámetros
-                  videoId = videoId.split('?')[0].split('&')[0];
-                }
-                // Elimina cualquier carácter extraño
-                videoId = videoId.replace(/[^a-zA-Z0-9_-]/g, '');
-              } catch (e) {}
-              // Log temporal para depuración
-              console.warn('YouTube resourceUrl:', resourceUrl, 'videoId:', videoId);
-              if (videoId && videoId.length >= 8) {
-                return (
-                  <div className="work-detail-video-embed" key={idx}>
-                    <iframe width="100%" height="220" src={`https://www.youtube.com/embed/${videoId}`} frameBorder="0" allowFullScreen loading="lazy"></iframe>
-                  </div>
-                );
-              } else {
-                return (
-                  <div className="work-detail-video-embed" key={idx}>
-                    <a href={resourceUrl} target="_blank" rel="noopener noreferrer">see video on youtube</a>
-                  </div>
-                );
-              }
-            } else if (resourceUrl.includes('vimeo.com')) {
-              // Extraer el ID de Vimeo y usar player.vimeo.com/video/ID
-              let vimeoId = '';
-              const match = resourceUrl.match(/vimeo.com\/(\d+)/);
-              if (match) vimeoId = match[1];
-              if (vimeoId) {
-                return (
-                  <div className="work-detail-video-embed" key={idx}>
-                    <iframe width="100%" height="220" src={`https://player.vimeo.com/video/${vimeoId}`} frameBorder="0" allowFullScreen loading="lazy"></iframe>
-                  </div>
-                );
-              } else {
-                return (
-                  <div className="work-detail-video-embed" key={idx}>
-                    <a href={resourceUrl} target="_blank" rel="noopener noreferrer">see video on vimeo</a>
-                  </div>
-                );
-              }
-            } else if (resourceUrl) {
-              return (
-                <img src={resourceUrl} alt={title} className="work-detail-image" key={idx} onClick={() => setFullImage(resourceUrl)} style={{cursor:'zoom-in'}} />
-              );
-            } else {
-              return null;
-            }
-          })}
-          {fullImage && (
-            <div className="image-modal-overlay" onClick={() => setFullImage(null)}>
-              <img src={fullImage} alt="full" className="image-modal-full" onClick={() => setFullImage(null)} />
+          {linkUrl ? (
+            <div className="work-detail-video-embed" style={{marginTop:'1rem'}}>
+              <a href={linkUrl} target="_blank" rel="noopener noreferrer">{linkUrl}</a>
             </div>
-          )}
-        </div>
-      </main>
-    );
-  }
-
-  return (
-    <div className="container">
-      <main className="content content-work-detail">
-        <div className="work-detail-header">
-          {/* Solo renderizar la flecha cuando loading y error son false */}
-          <Link to="/works" className="back-button">&larr;</Link>
-        </div>
-        <div className="work-detail-container">
-          <div className="work-detail-block">
-            <div className="work-detail-meta" style={{marginTop: 0, paddingTop: 0}}>
-              {title && <div className="work-detail-title-small" style={{ fontWeight: 'normal', fontSize: '1rem', marginBottom: '0.2rem', marginTop: 0, fontFamily: 'inherit', color: '#181818' }}>title: {title}</div>}
-              {date && <div className="work-detail-date-small" style={{ color: '#666', fontSize: '0.95rem', marginBottom: '0.5rem', fontWeight: 'normal', fontFamily: 'inherit' }}>{date}</div>}
-              {type && <div className="work-detail-type" style={{ color: '#888', fontSize: '0.95rem', marginBottom: '0.5rem', fontWeight: 'normal', fontFamily: 'inherit' }}>{type}</div>}
-              {description && <div className="work-detail-description" style={{ fontWeight: 'normal', fontFamily: 'inherit', fontSize: '1rem', color: '#181818' }}>{description}</div>}
-            </div>
-            {images.map((resourceUrl, idx) => {
+          ) : (
+            images.map((resourceUrl, idx) => {
               if (resourceUrl.match(/\.(mp4)$/i)) {
                 return (
                   <video className="work-detail-image" controls preload="metadata" style={{background:'#000'}} key={idx}>
@@ -264,7 +163,7 @@ function WorkDetail() {
                 if (videoId && videoId.length >= 8) {
                   return (
                     <div className="work-detail-video-embed" key={idx}>
-                      <iframe width="100%" height="400" src={`https://www.youtube.com/embed/${videoId}`} frameBorder="0" allowFullScreen loading="lazy"></iframe>
+                      <iframe width="100%" height="220" src={`https://www.youtube.com/embed/${videoId}`} frameBorder="0" allowFullScreen loading="lazy"></iframe>
                     </div>
                   );
                 } else {
@@ -282,7 +181,7 @@ function WorkDetail() {
                 if (vimeoId) {
                   return (
                     <div className="work-detail-video-embed" key={idx}>
-                      <iframe width="100%" height="400" src={`https://player.vimeo.com/video/${vimeoId}`} frameBorder="0" allowFullScreen loading="lazy"></iframe>
+                      <iframe width="100%" height="220" src={`https://player.vimeo.com/video/${vimeoId}`} frameBorder="0" allowFullScreen loading="lazy"></iframe>
                     </div>
                   );
                 } else {
@@ -299,7 +198,120 @@ function WorkDetail() {
               } else {
                 return null;
               }
-            })}
+            })
+          )}
+          {fullImage && (
+            <div className="image-modal-overlay" onClick={() => setFullImage(null)}>
+              <img src={fullImage} alt="full" className="image-modal-full" onClick={() => setFullImage(null)} />
+            </div>
+          )}
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <div className="container">
+      <main className="content content-work-detail">
+        <div className="work-detail-header">
+          {/* Solo renderizar la flecha cuando loading y error son false */}
+          <Link to="/works" className="back-button">&larr;</Link>
+        </div>
+        <div className="work-detail-container">
+          <div className="work-detail-block">
+            <div className="work-detail-meta" style={{marginTop: 0, paddingTop: 0}}>
+              {title && <div className="work-detail-title-small" style={{ fontWeight: 'normal', fontSize: '1rem', marginBottom: '0.2rem', marginTop: 0, fontFamily: 'inherit', color: '#181818' }}>title: {title}</div>}
+              {date && <div className="work-detail-date-small" style={{ color: '#666', fontSize: '0.95rem', marginBottom: '0.5rem', fontWeight: 'normal', fontFamily: 'inherit' }}>{date}</div>}
+              {type && <div className="work-detail-type" style={{ color: '#888', fontSize: '0.95rem', marginBottom: '0.5rem', fontWeight: 'normal', fontFamily: 'inherit' }}>{type}</div>}
+              {description && <div className="work-detail-description" style={{ fontWeight: 'normal', fontFamily: 'inherit', fontSize: '1rem', color: '#181818' }}>{description}</div>}
+            </div>
+            {linkUrl ? (
+              <div className="work-detail-video-embed" style={{marginTop:'1rem'}}>
+                <a href={linkUrl} target="_blank" rel="noopener noreferrer">{linkUrl}</a>
+              </div>
+            ) : (
+              images.map((resourceUrl, idx) => {
+                if (resourceUrl.match(/\.(mp4)$/i)) {
+                  return (
+                    <video className="work-detail-image" controls preload="metadata" style={{background:'#000'}} key={idx}>
+                      <source src={resourceUrl} type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
+                  );
+                } else if (resourceUrl.includes('youtube.com') || resourceUrl.includes('youtu.be')) {
+                  // Extraer videoId para embed (más robusto)
+                  let videoId = '';
+                  try {
+                    // 1. youtu.be/VIDEOID
+                    let match = resourceUrl.match(/youtu\.be\/([a-zA-Z0-9_-]{8,})/);
+                    if (match) videoId = match[1];
+                    // 2. youtube.com/watch?v=VIDEOID
+                    if (!videoId) {
+                      match = resourceUrl.match(/[?&]v=([a-zA-Z0-9_-]{8,})/);
+                      if (match) videoId = match[1];
+                    }
+                    // 3. youtube.com/shorts/VIDEOID
+                    if (!videoId) {
+                      match = resourceUrl.match(/shorts\/([a-zA-Z0-9_-]{8,})/);
+                      if (match) videoId = match[1];
+                    }
+                    // 4. youtube.com/embed/VIDEOID
+                    if (!videoId) {
+                      match = resourceUrl.match(/embed\/([a-zA-Z0-9_-]{8,})/);
+                      if (match) videoId = match[1];
+                    }
+                    // 5. Si aún no, intenta extraer tras último /
+                    if (!videoId) {
+                      const parts = resourceUrl.split('/');
+                      videoId = parts[parts.length - 1];
+                      // Elimina parámetros
+                      videoId = videoId.split('?')[0].split('&')[0];
+                    }
+                    // Elimina cualquier carácter extraño
+                    videoId = videoId.replace(/[^a-zA-Z0-9_-]/g, '');
+                  } catch (e) {}
+                  // Log temporal para depuración
+                  console.warn('YouTube resourceUrl:', resourceUrl, 'videoId:', videoId);
+                  if (videoId && videoId.length >= 8) {
+                    return (
+                      <div className="work-detail-video-embed" key={idx}>
+                        <iframe width="100%" height="400" src={`https://www.youtube.com/embed/${videoId}`} frameBorder="0" allowFullScreen loading="lazy"></iframe>
+                      </div>
+                    );
+                  } else {
+                    return (
+                      <div className="work-detail-video-embed" key={idx}>
+                        <a href={resourceUrl} target="_blank" rel="noopener noreferrer">see video on youtube</a>
+                      </div>
+                    );
+                  }
+                } else if (resourceUrl.includes('vimeo.com')) {
+                  // Extraer el ID de Vimeo y usar player.vimeo.com/video/ID
+                  let vimeoId = '';
+                  const match = resourceUrl.match(/vimeo.com\/(\d+)/);
+                  if (match) vimeoId = match[1];
+                  if (vimeoId) {
+                    return (
+                      <div className="work-detail-video-embed" key={idx}>
+                        <iframe width="100%" height="400" src={`https://player.vimeo.com/video/${vimeoId}`} frameBorder="0" allowFullScreen loading="lazy"></iframe>
+                      </div>
+                    );
+                  } else {
+                    return (
+                      <div className="work-detail-video-embed" key={idx}>
+                        <a href={resourceUrl} target="_blank" rel="noopener noreferrer">see video on vimeo</a>
+                      </div>
+                    );
+                  }
+                } else if (resourceUrl) {
+                  return (
+                    <img src={resourceUrl} alt={title} className="work-detail-image" key={idx} onClick={() => setFullImage(resourceUrl)} style={{cursor:'zoom-in'}} />
+                  );
+                } else {
+                  return null;
+                }
+              })
+            )}
             {fullImage && (
               <div className="image-modal-overlay" onClick={() => setFullImage(null)}>
                 <img src={fullImage} alt="full" className="image-modal-full" onClick={() => setFullImage(null)} />
