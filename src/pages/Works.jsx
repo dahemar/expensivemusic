@@ -176,16 +176,9 @@ function Works() {
                             )}
                           </td>
                           <td>
-                            {useExternal && linkUrl && (
-                              <a href={linkUrl} target="_blank" rel="noopener noreferrer" className="view-work">
-                                link
-                              </a>
-                            )}
-                            {!useExternal && (
-                              <button className="view-work" onClick={() => navigate(`/work/${encodeURIComponent(slug)}`)}>
-                                view
-                              </button>
-                            )}
+                            <button className="view-work" onClick={() => navigate(`/work/${encodeURIComponent(slug)}`)}>
+                              view
+                            </button>
                           </td>
                         </tr>
                       );
