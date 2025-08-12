@@ -49,7 +49,7 @@ function Works() {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [sort, setSort] = useState({ col: 'date', dir: 'desc', userClicked: false });
+  const [sort, setSort] = useState({ col: '', dir: 'asc', userClicked: false });
   const [modalImg, setModalImg] = useState(null);
   const [modalAlt, setModalAlt] = useState('');
   const navigate = useNavigate();
