@@ -91,7 +91,6 @@ export default function TestAssets() {
               </tbody>
             </table>
           )}
-          <p style={{marginTop:'1rem', color:'#666'}}>Tip: cualquier imagen en <code>public/</code> es accesible directamente: <code>https://tu-dominio.com/works/COMMISSIONS/1.webp</code></p>
         </section>
       </main>
     </div>
