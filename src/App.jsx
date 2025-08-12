@@ -8,6 +8,7 @@ import Music from './pages/Music';
 import Radio from './pages/Radio';
 import Contact from './pages/Contact';
 import WorkDetail from './pages/WorkDetail';
+import TestAssets from './pages/TestAssets';
 import { useState, useEffect } from 'react';
 
 function SidebarWithLocation() {
@@ -168,6 +169,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/commercial-work" element={<Commercial commercialPosts={commercialPosts} onImageClick={openModal} />} />
         <Route path="/work/:id" element={<WorkDetail />} />
+        <Route path="/test-assets" element={<TestAssets />} />
       </Routes>
       {modalImg && (
         <div className="image-modal-overlay" onClick={closeModal}>
