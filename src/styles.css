@@ -377,6 +377,21 @@ a:hover {
         text-align: left !important;
         text-align-last: left !important;
     }
+    /* Asegurar que la segunda columna también esté alineada a la izquierda */
+    .works-table th:nth-child(2),
+    .works-table td:nth-child(2) {
+        text-align: left !important;
+        vertical-align: top !important;
+    }
+    .works-table tbody tr td:nth-child(2) {
+        text-align: left !important;
+        vertical-align: top !important;
+        text-align-last: left !important;
+    }
+    .works-table tbody tr td:nth-child(2) * {
+        text-align: left !important;
+        text-align-last: left !important;
+    }
     .mobile-title {
         font-weight: normal;
     }
