@@ -364,6 +364,7 @@ a:hover {
     .works-table th:nth-child(2),
     .works-table td:nth-child(2) {
         text-align: left;
+        vertical-align: top;
     }
     .mobile-title {
         font-weight: normal;
