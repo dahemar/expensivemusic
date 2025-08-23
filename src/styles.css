@@ -361,10 +361,21 @@ a:hover {
     .works-table td:last-child {
         text-align: center;
     }
-    .works-table th:nth-child(2),
-    .works-table td:nth-child(2) {
-        text-align: left;
-        vertical-align: top;
+    .works-table th:nth-child(1),
+    .works-table td:nth-child(1) {
+        text-align: left !important;
+        vertical-align: top !important;
+    }
+    /* Regla más específica para asegurar alineación del título */
+    .works-table tbody tr td:nth-child(1) {
+        text-align: left !important;
+        vertical-align: top !important;
+        text-align-last: left !important;
+    }
+    /* Forzar alineación izquierda para texto multilínea */
+    .works-table tbody tr td:nth-child(1) * {
+        text-align: left !important;
+        text-align-last: left !important;
     }
     .mobile-title {
         font-weight: normal;
