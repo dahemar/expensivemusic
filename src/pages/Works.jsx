@@ -4,6 +4,7 @@ import '../glitch.css';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Fragment } from 'react';
+import { resolveImageUrl } from '../utils/imageUtils';
 
 const SPREADSHEET_ID = '1RTrPB8qONlXQG37mRzPJ8aanTlxLGLy3MeYpsyKnmBk';
 const API_KEY = 'AIzaSyAKYKOA8prGrSMgWAifEvjLJq9lUqsULzQ';
@@ -148,7 +149,7 @@ function Works() {
                             {type.toLowerCase() === 'commissions' && images.length > 0 && (
                               <div style={{marginTop:'0.5rem', display:'flex', gap:'0.5rem', flexWrap:'wrap'}}>
                                 {images.map((img, idx) => {
-                                  const imgSrc = img.startsWith('http') ? img : `${import.meta.env.BASE_URL}${img.replace(/^\//, '')}`;
+                                  const imgSrc = resolveImageUrl(img, import.meta.env.BASE_URL);
                                   return <img key={idx} src={imgSrc} alt={title} style={{width:60, height:60, objectFit:'cover', cursor:'zoom-in', borderRadius:0}} onClick={() => { setModalImg(imgSrc); setModalAlt(title); }} />;
                                 })}
                               </div>
@@ -169,7 +170,7 @@ function Works() {
                             {type.toLowerCase() === 'commissions' && images.length > 0 && (
                               <div style={{marginTop:'0.5rem', display:'flex', gap:'0.5rem', flexWrap:'wrap'}}>
                                 {images.map((img, idx) => {
-                                  const imgSrc = img.startsWith('http') ? img : `${import.meta.env.BASE_URL}${img.replace(/^\//, '')}`;
+                                  const imgSrc = resolveImageUrl(img, import.meta.env.BASE_URL);
                                   return <img key={idx} src={imgSrc} alt={title} style={{width:60, height:60, objectFit:'cover', cursor:'zoom-in', borderRadius:0}} onClick={() => { setModalImg(imgSrc); setModalAlt(title); }} />;
                                 })}
                               </div>

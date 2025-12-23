@@ -10,6 +10,7 @@ import Contact from './pages/Contact';
 import WorkDetail from './pages/WorkDetail';
 import TestAssets from './pages/TestAssets';
 import { useState, useEffect } from 'react';
+import { resolveImageUrl } from './utils/imageUtils';
 
 function SidebarWithLocation() {
   const location = useLocation();
@@ -45,9 +46,7 @@ function Blog({ onImageClick, blogPosts }) {
     <main className="content">
       <div id="blog-posts" className="blog-container">
         {blogPosts.map((post, idx) => {
-          const cleanUrl = extractImageUrl(post.imageUrl);
-          // Usar BASE_URL para rutas relativas
-          const imgSrc = cleanUrl.startsWith('http') ? cleanUrl : `${import.meta.env.BASE_URL}${cleanUrl.replace(/^\//, '')}`;
+          const imgSrc = resolveImageUrl(post.imageUrl, import.meta.env.BASE_URL);
           return (
             <div className="blog-post" key={idx} data-description={post.description || ''}>
               <img src={imgSrc} alt={post.title || `blog ${idx+1}`} className="work-detail-image" onClick={e => onImageClick(imgSrc, post.title || '', post.description || '')} style={{cursor:'zoom-in'}} />
@@ -74,9 +73,7 @@ function Commercial({ commercialPosts, onImageClick }) {
           {/* <h2>commercial work</h2> */}
           <div id="commercial-posts" className="blog-container">
             {commercialPosts.map((post, idx) => {
-              let cleanUrl = extractImageUrl(post.imageUrl);
-              // Usar BASE_URL para rutas relativas
-              const imgSrc = cleanUrl.startsWith('http') ? cleanUrl : `${import.meta.env.BASE_URL}${cleanUrl.replace(/^\//, '')}`;
+              const imgSrc = resolveImageUrl(post.imageUrl, import.meta.env.BASE_URL);
               return (
                 <div className="blog-post" key={idx} data-description={post.description || ''}>
                   <img src={imgSrc} alt={post.altText || `commercial ${idx+1}`} className="work-detail-image" style={{cursor:'zoom-in'}} onClick={() => onImageClick(imgSrc, post.altText || `commercial ${idx+1}`, post.description || '')} />

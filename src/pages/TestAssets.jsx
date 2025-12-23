@@ -2,6 +2,7 @@ import '../styles.css';
 import '../sidebar.css';
 import '../glitch.css';
 import { useEffect, useState } from 'react';
+import { resolveImageUrl, isImgurUrl } from '../utils/imageUtils';
 
 const SPREADSHEET_ID = '1RTrPB8qONlXQG37mRzPJ8aanTlxLGLy3MeYpsyKnmBk';
 const API_KEY = 'AIzaSyAKYKOA8prGrSMgWAifEvjLJq9lUqsULzQ';
@@ -38,8 +39,8 @@ export default function TestAssets() {
           for (const p of paths) {
             const raw = extractImageUrl(p);
             if (!raw) continue;
-            const resolved = raw.startsWith('http') ? raw : `${import.meta.env.BASE_URL}${raw.replace(/^\//, '')}`;
-            out.push({ title, date, type, raw, resolved });
+            const resolved = resolveImageUrl(p, import.meta.env.BASE_URL);
+            out.push({ title, date, type, raw, resolved, isImgur: isImgurUrl(raw) });
           }
         }
         setItems(out);
@@ -75,15 +76,18 @@ export default function TestAssets() {
               </thead>
               <tbody>
                 {filtered.map((it, idx) => (
-                  <tr key={idx}>
+                  <tr key={idx} style={it.isImgur ? {backgroundColor: '#fff3cd'} : {}}>
                     <td>{it.title}</td>
-                    <td><code>{it.raw}</code></td>
+                    <td>
+                      <code>{it.raw}</code>
+                      {it.isImgur && <span style={{color:'#856404', marginLeft:'0.5rem', fontSize:'0.85em'}}>⚠️ imgur (proxied)</span>}
+                    </td>
                     <td><a href={it.resolved} target="_blank" rel="noopener noreferrer">{it.resolved}</a></td>
                     <td>
                       {it.resolved.match(/\.(mp4)$/i) ? (
                         <span>video</span>
                       ) : (
-                        <img src={it.resolved} alt={it.title} style={{width:80, height:80, objectFit:'cover'}} />
+                        <img src={it.resolved} alt={it.title} style={{width:80, height:80, objectFit:'cover'}} onError={(e) => { e.target.style.border = '2px solid red'; e.target.alt = 'Failed to load'; }} />
                       )}
                     </td>
                   </tr>

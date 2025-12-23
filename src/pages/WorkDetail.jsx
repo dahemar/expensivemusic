@@ -3,6 +3,7 @@ import '../sidebar.css';
 import '../glitch.css';
 import { useParams, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { resolveImageUrl } from '../utils/imageUtils';
 
 const SPREADSHEET_ID = '1RTrPB8qONlXQG37mRzPJ8aanTlxLGLy3MeYpsyKnmBk';
 const API_KEY = 'AIzaSyAKYKOA8prGrSMgWAifEvjLJq9lUqsULzQ';
@@ -97,12 +98,9 @@ function WorkDetail() {
   const [title = '', date = '', description = '', type = '', imageUrls = '', linkUrl = ''] = work;
   const images = imageUrls
     .split(',')
-    .map(url => extractImageUrl(url.trim()))
+    .map(url => url.trim())
     .filter(Boolean)
-    .map(url => {
-      if (url.startsWith('http')) return url;
-      return `${import.meta.env.BASE_URL}${url.replace(/^\//, '')}`;
-    });
+    .map(url => resolveImageUrl(url, import.meta.env.BASE_URL));
 
   if (isMobile) {
     return (
