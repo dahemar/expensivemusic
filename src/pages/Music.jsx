@@ -19,7 +19,7 @@ function Music() {
             <div className="music-project">
               <div className="music-project-info">
                 <h2>angelito</h2>
-                <p><a href="https://angelito17.bandcamp.com/album/malice-roadshow-starting-a-fight" target="_blank" className="music-link" rel="noopener noreferrer">bandcamp</a></p>
+                <p><a href="https://angelito17.bandcamp.com" target="_blank" className="music-link" rel="noopener noreferrer">bandcamp</a></p>
                 <p><a href="https://on.soundcloud.com/ULwhgDYD9dbYHwFsQe" target="_blank" className="music-link" rel="noopener noreferrer">soundcloud</a></p>
                 <p><a href="https://www.ninaprotocol.com/releases/angelito-malice-roadshow-starting-a-fight" target="_blank" className="music-link" rel="noopener noreferrer">nina</a></p>
               </div>
