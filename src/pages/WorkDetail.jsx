@@ -19,6 +19,14 @@ function extractImageUrl(rawUrl) {
   return rawUrl.trim();
 }
 
+function isImageResource(rawUrl) {
+  if (!rawUrl) return false;
+  const trimmedUrl = rawUrl.trim();
+  const imageUrl = extractImageUrl(trimmedUrl);
+  if (imageUrl !== trimmedUrl) return true;
+  return /\.(avif|gif|jpe?g|png|svg|webp)$/i.test(imageUrl.split(/[?#]/)[0]);
+}
+
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   useEffect(() => {
@@ -96,11 +104,15 @@ function WorkDetail() {
   }
 
   const [title = '', date = '', description = '', type = '', imageUrls = '', linkUrl = ''] = work;
+  const linkImageUrl = isImageResource(linkUrl)
+    ? resolveImageUrl(linkUrl, import.meta.env.BASE_URL)
+    : '';
   const images = imageUrls
     .split(',')
     .map(url => url.trim())
     .filter(Boolean)
-    .map(url => resolveImageUrl(url, import.meta.env.BASE_URL));
+    .map(url => resolveImageUrl(url, import.meta.env.BASE_URL))
+    .concat(linkImageUrl ? [linkImageUrl] : []);
 
   if (isMobile) {
     return (
@@ -111,11 +123,12 @@ function WorkDetail() {
           {date && <div className="work-detail-date-small" style={{ color: '#666', fontSize: '0.95rem', marginBottom: '0.5rem', fontWeight: 'normal', fontFamily: 'inherit' }}>{date}</div>}
           {type && <div className="work-detail-type" style={{ color: '#888', fontSize: '0.95rem', marginBottom: '0.5rem', fontWeight: 'normal', fontFamily: 'inherit' }}>{type}</div>}
           {description && <div className="work-detail-description" style={{ fontWeight: 'normal', fontFamily: 'inherit', fontSize: '1rem', color: '#181818' }}>{description}</div>}
-          {linkUrl ? (
+          {linkUrl && !linkImageUrl && (
             <div className="work-detail-video-embed" style={{marginTop:'1rem'}}>
               <a href={linkUrl} target="_blank" rel="noopener noreferrer">{linkUrl}</a>
             </div>
-          ) : (
+          )}
+          {
             images.map((resourceUrl, idx) => {
               if (resourceUrl.match(/\.(mp4)$/i)) {
                 return (
@@ -197,7 +210,7 @@ function WorkDetail() {
                 return null;
               }
             })
-          )}
+          }
           {fullImage && (
             <div className="image-modal-overlay" onClick={() => setFullImage(null)}>
               <img src={fullImage} alt="full" className="image-modal-full" onClick={() => setFullImage(null)} />
@@ -223,11 +236,12 @@ function WorkDetail() {
               {type && <div className="work-detail-type" style={{ color: '#888', fontSize: '0.95rem', marginBottom: '0.5rem', fontWeight: 'normal', fontFamily: 'inherit' }}>{type}</div>}
               {description && <div className="work-detail-description" style={{ fontWeight: 'normal', fontFamily: 'inherit', fontSize: '1rem', color: '#181818' }}>{description}</div>}
             </div>
-            {linkUrl ? (
+            {linkUrl && !linkImageUrl && (
               <div className="work-detail-video-embed" style={{marginTop:'1rem'}}>
                 <a href={linkUrl} target="_blank" rel="noopener noreferrer">{linkUrl}</a>
               </div>
-            ) : (
+            )}
+            {
               images.map((resourceUrl, idx) => {
                 if (resourceUrl.match(/\.(mp4)$/i)) {
                   return (
@@ -309,7 +323,7 @@ function WorkDetail() {
                   return null;
                 }
               })
-            )}
+            }
             {fullImage && (
               <div className="image-modal-overlay" onClick={() => setFullImage(null)}>
                 <img src={fullImage} alt="full" className="image-modal-full" onClick={() => setFullImage(null)} />
