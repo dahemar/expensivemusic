@@ -1,11 +1,46 @@
 import '../styles.css';
 import '../sidebar.css';
 import '../glitch.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { resolveImageUrl } from '../utils/imageUtils';
+
+const SPREADSHEET_ID = '1RTrPB8qONlXQG37mRzPJ8aanTlxLGLy3MeYpsyKnmBk';
+const API_KEY = 'AIzaSyAKYKOA8prGrSMgWAifEvjLJq9lUqsULzQ';
+const RANGE = 'Music!A2:F';
+const BASE_URL = 'https://sheets.googleapis.com/v4/spreadsheets/';
 
 function Music() {
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [modalImg, setModalImg] = useState(null);
   const [modalAlt, setModalAlt] = useState('');
+
+  useEffect(() => {
+    async function fetchMusic() {
+      try {
+        const url = `${BASE_URL}${SPREADSHEET_ID}/values/${RANGE}?key=${API_KEY}`;
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Error fetching music data');
+        const data = await response.json();
+        const rows = (data.values || []).map(row => ({
+          name: row[0] || '',
+          bandcampUrl: row[1] || '',
+          soundcloudUrl: row[2] || '',
+          ninaUrl: row[3] || '',
+          description: row[4] || '',
+          thumbnail: row[5] || '',
+        })).filter(project => project.name);
+        setProjects(rows);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchMusic();
+  }, []);
+
   const openModal = (src, alt) => {
     setModalImg(src);
     setModalAlt(alt);
@@ -15,41 +50,29 @@ function Music() {
     <div className="container">
       <main className="content">
         <div className="section-content">
-          <div className="music-projects">
-            <div className="music-project">
-              <div className="music-project-info">
-                <h2>angelito</h2>
-                <p><a href="https://angelito17.bandcamp.com" target="_blank" className="music-link" rel="noopener noreferrer">bandcamp</a></p>
-                <p><a href="https://on.soundcloud.com/ULwhgDYD9dbYHwFsQe" target="_blank" className="music-link" rel="noopener noreferrer">soundcloud</a></p>
-                <p><a href="https://www.ninaprotocol.com/releases/angelito-malice-roadshow-starting-a-fight" target="_blank" className="music-link" rel="noopener noreferrer">nina</a></p>
-              </div>
-              <div className="music-thumbnail-container">
-                <img src={`${import.meta.env.BASE_URL}music/malice.jpg`} alt="angelito malice" className="music-thumbnail" style={{cursor:'zoom-in'}} onClick={() => openModal(`${import.meta.env.BASE_URL}music/malice.jpg`, 'angelito malice')} />
-              </div>
+          {error && <p style={{color: 'red'}}>{error}</p>}
+          {!loading && !error && (
+            <div className="music-projects">
+              {projects.map((project, index) => {
+                const thumbnail = resolveImageUrl(project.thumbnail, import.meta.env.BASE_URL);
+                return (
+                  <div className="music-project" key={`${project.name}-${index}`}>
+                    <div className="music-project-info">
+                      <h2>{project.name}</h2>
+                      {project.bandcampUrl && <p><a href={project.bandcampUrl} target="_blank" className="music-link" rel="noopener noreferrer">bandcamp</a></p>}
+                      {project.soundcloudUrl && <p><a href={project.soundcloudUrl} target="_blank" className="music-link" rel="noopener noreferrer">soundcloud</a></p>}
+                      {project.ninaUrl && <p><a href={project.ninaUrl} target="_blank" className="music-link" rel="noopener noreferrer">nina</a></p>}
+                    </div>
+                    {thumbnail && (
+                      <div className="music-thumbnail-container">
+                        <img src={thumbnail} alt={project.description || project.name} className="music-thumbnail" style={{cursor:'zoom-in'}} onClick={() => openModal(thumbnail, project.description || project.name)} />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
-            <div className="music-project">
-              <div className="music-project-info">
-                <h2>babyfloating</h2>
-                <p><a href="https://babyfloating.bandcamp.com/album/babysmoking" target="_blank" className="music-link" rel="noopener noreferrer">bandcamp</a></p>
-                <p><a href="https://on.soundcloud.com/XdokOAao7QmTZtzJTd" target="_blank" className="music-link" rel="noopener noreferrer">soundcloud</a></p>
-                <p><a href="https://www.ninaprotocol.com/releases/babyfloating-babysmoking?ref=joni" target="_blank" className="music-link" rel="noopener noreferrer">nina</a></p>
-              </div>
-              <div className="music-thumbnail-container">
-                <img src={`${import.meta.env.BASE_URL}music/babysmoking.jpg`} alt="babyfloating babysmoking" className="music-thumbnail" style={{cursor:'zoom-in'}} onClick={() => openModal(`${import.meta.env.BASE_URL}music/babysmoking.jpg`, 'babyfloating babysmoking')} />
-              </div>
-            </div>
-            <div className="music-project">
-              <div className="music-project-info">
-                <h2>club prizren</h2>
-                <p><a href="https://clubprizren.bandcamp.com/album/club-prizren" target="_blank" className="music-link" rel="noopener noreferrer">bandcamp</a></p>
-                <p><a href="https://on.soundcloud.com/5TynDngvW5TnY4UzwR" target="_blank" className="music-link" rel="noopener noreferrer">soundcloud</a></p>
-                <p><a href="https://www.ninaprotocol.com/releases/club-prizren-club-prizren" target="_blank" className="music-link" rel="noopener noreferrer">nina</a></p>
-              </div>
-              <div className="music-thumbnail-container">
-                <img src={`${import.meta.env.BASE_URL}music/club.jpg`} alt="club prizren" className="music-thumbnail" style={{cursor:'zoom-in'}} onClick={() => openModal(`${import.meta.env.BASE_URL}music/club.jpg`, 'club prizren')} />
-              </div>
-            </div>
-          </div>
+          )}
         </div>
         {modalImg && (
           <div className="image-modal-overlay" onClick={closeModal}>
